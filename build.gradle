@@ -1,36 +1,31 @@
-plugins {
-    // 26.x is unobfuscated: use the NON-remapping Loom plugin id
-    id 'net.fabricmc.fabric-loom' version '1.18.2'
-    id 'maven-publish'
-}
+name: Build Java JAR
 
-version = project.mod_version
-group = project.maven_group
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
-base {
-    archivesName = project.archives_base_name
-}
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-dependencies {
-    minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    // No mappings line (Mojang names are used as-is) and plain `implementation`, not `modImplementation`.
-    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
-}
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
 
-processResources {
-    inputs.property "version", project.version
-    filesMatching("fabric.mod.json") {
-        expand "version": inputs.properties.version
-    }
-}
+    - name: Set up JDK 17
+      uses: actions/setup-java@v5
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: 'gradle' # Switched to Gradle caching
 
-tasks.withType(JavaCompile).configureEach {
-    it.options.release = 25
-}
+    - name: Build with Gradle
+      run: ./gradlew build
 
-java {
-    withSourcesJar()
-    sourceCompatibility = JavaVersion.VERSION_25
-    targetCompatibility = JavaVersion.VERSION_25
-}
+    - name: Upload JAR Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: my-built-jar
+        path: build/libs/*.jar # Gradle output directory
