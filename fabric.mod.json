@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "utilmod",
+  "version": "${version}",
+  "name": "Util Mod",
+  "description": "Client-side Xray, Tracers and Geode/Base Finder with an in-game settings GUI. Sends no custom packets.",
+  "authors": ["You"],
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["com.example.utilmod.UtilModClient"]
+  },
+  "mixins": [
+    { "config": "utilmod.mixins.json", "environment": "client" }
+  ],
+  "depends": {
+    "fabricloader": ">=0.19.5",
+    "minecraft": "~26.3",
+    "java": ">=25",
+    "fabric-api": "*"
+  }
+}
