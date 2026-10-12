@@ -1,0 +1,35 @@
+name: Build Java JAR
+
+on:
+  push:
+    branches: [ "main" ] # Runs every time you push to the main branch
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17' # Change to your preferred Java version (8, 11, 21, etc.)
+        distribution: 'temurin'
+
+    # OPTION A: If your project uses Maven
+    - name: Build with Maven
+      run: mvn clean package
+
+    # OPTION B: If your project uses Gradle (Uncomment below if using Gradle instead)
+    # - name: Build with Gradle
+    #   run: ./gradlew build
+
+    - name: Upload JAR Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: my-built-jar
+        path: target/*.jar # For Maven. (Use 'build/libs/*.jar' for Gradle)
